@@ -59,12 +59,24 @@ bool HelloWorld::init()
 	logo->setPosition(50, visibleSize.height / 2);
 	addChild(logo);
 
-	auto rotateTo = RotateBy::create(2.0f, 360.0f);
-	logo->runAction(rotateTo);
-	auto moveBy = MoveBy::create(2, Vec2(visibleSize.width/2, visibleSize.height/2));
-	logo->runAction(moveBy);
-	auto moveTo = MoveTo::create(2, Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	logo->runAction(moveTo);
+	auto logo2 = Sprite::create("mySprite.png");
+	logo2->setPosition(visibleSize.width - 50 , visibleSize.height / 2);
+	addChild(logo2);
+
+	/*auto rotateTo = RotateBy::create(2.0f, 360.0f);
+	logo->runAction(rotateTo);*/
+
+	auto moveBy = MoveBy::create(0.5, Vec2(10,50));
+	//logo->runAction(moveBy);
+	//Sleep(3000);
+	auto moveBy2 = MoveBy::create(0.25, Vec2(10, -50));
+	//logo->runAction(moveBy2);
+
+	auto sequence = Sequence::create(moveBy, moveBy2,nullptr);
+	logo->runAction(sequence);
+
+	/*auto moveTo = MoveTo::create(2, Vec2(visibleSize.width/2, visibleSize.height / 2));
+	logo2->runAction(moveTo)*/;
     ///////////////////////////////
     //// 2. add a menu item with "X" image, which is clicked to quit the program
     ////    you may modify it.
