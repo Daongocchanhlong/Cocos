@@ -24,13 +24,13 @@
 
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "cocos2d.h"	
 
-USING_NS_CC;
+using namespace cocos2d;
 
 Scene* HelloWorld::createScene()
-{
-	auto scene = Scene::createWithPhysics();
-	scene->getPhysicsWorld()->setGravity(Vect(0.0f, 0.0f));               // trong luc = 0
+{ 
+	auto scene = HelloWorld::create();
 	auto layer = HelloWorld::create();
 	scene->addChild(layer);
 	return scene;
@@ -55,25 +55,25 @@ bool HelloWorld::init()
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto logo = Sprite::create("mySprite.png");
-	logo->setPosition(50, visibleSize.height / 2);
+	auto logo = Sprite::create("splash_back.png");
+	logo->setPosition(visibleSize.width/2, visibleSize.height / 2);
 	addChild(logo);
-
+	logo->setContentSize(visibleSize);
 	auto logo2 = Sprite::create("mySprite.png");
-	logo2->setPosition(visibleSize.width - 50 , visibleSize.height / 2);
+	logo2->setPosition(50 , visibleSize.height / 2);
 	addChild(logo2);
 
-	/*auto rotateTo = RotateBy::create(2.0f, 360.0f);
-	logo->runAction(rotateTo);*/
-
-	auto moveBy = MoveBy::create(0.5, Vec2(10,50));
+	auto rotateTo = RotateBy::create(2.0f, 90.0f);
+	auto moveBy = MoveBy::create(0.5, Vec2(20,50));
 	//logo->runAction(moveBy);
 	//Sleep(3000);
-	auto moveBy2 = MoveBy::create(0.25, Vec2(10, -50));
+	auto moveBy2 = MoveBy::create(0.5, Vec2(20, -50));
 	//logo->runAction(moveBy2);
 
-	auto sequence = Sequence::create(moveBy, moveBy2,nullptr);
-	logo->runAction(sequence);
+	auto sequence = Sequence::create(moveBy, moveBy2, moveBy, rotateTo, nullptr);
+	/*auto sequence2 = Sequence::create(moveBy, rotateTo, nullptr);
+	auto sequence3 = Sequence::create(sequence, sequence2, nullptr);*/
+	logo2->runAction(sequence);
 
 	/*auto moveTo = MoveTo::create(2, Vec2(visibleSize.width/2, visibleSize.height / 2));
 	logo2->runAction(moveTo)*/;
