@@ -22,18 +22,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "HelloWorldScene.h"
+
 #include "SimpleAudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "MenuGame.h"
+#include <vector>
 
+using namespace std;
 using namespace cocos2d;
 
 
 Scene* MenuGame::createScene()
 {
-	auto scene = HelloWorld::create();
-	auto layer = HelloWorld::create();
+	auto scene = MenuGame::create();
+	auto layer = MenuGame::create();
 	scene->addChild(layer);
 	return scene;
 }
@@ -47,7 +49,54 @@ static void problemLoading(const char* filename)
 
 bool MenuGame::init()
 {
-	return false;
+	if (!Scene::init())
+	{	
+		return false;
+	}
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	//add background menu
+	auto backgroundMenu = Sprite::create("backgroundMenu.png");
+	backgroundMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	backgroundMenu->setContentSize(visibleSize);
+	this->addChild(backgroundMenu);
+	//create menu
+	auto itemPlay = MenuItemFont::create("Play", nullptr);
+	itemPlay->setColor(Color3B::RED);
+	auto itemSetting = MenuItemFont::create("Setting", nullptr);
+	itemSetting->setColor(Color3B::RED);
+	auto itemMoreGame = MenuItemFont::create("More Game", nullptr);
+	itemMoreGame->setColor(Color3B::RED);
+	auto itemAbout = MenuItemFont::create("About", nullptr);
+	itemAbout->setColor(Color3B::RED);
+	auto itemQuit = MenuItemFont::create("Quit", nullptr);
+	itemQuit->setColor(Color3B::RED);
+	/*itemPlay->setPosition(400, 300);
+	itemSetting->setPosition(400, 250);
+	itemMoreGame->setPosition(400, 200);
+	itemAbout->setPosition(400, 150);*/
+	auto menuLabel = Menu::create(itemPlay, itemSetting, itemMoreGame,itemAbout,itemQuit, nullptr);
+	menuLabel->alignItemsVerticallyWithPadding(10);
+	menuLabel->setPosition(visibleSize.width/2 - 70, visibleSize.height/2 +50);
+	addChild(menuLabel);
+
+	//add animation
+	auto mySprite = Sprite::create("hero/hero (1).png");
+	mySprite->setPosition(Vec2(visibleSize.width /2, visibleSize.height / 2));
+	mySprite->setContentSize(visibleSize/5);
+	this->addChild(mySprite);
+	Vector<SpriteFrame*> animFrames;
+	animFrames.reserve(13);
+	for (int i = 1; i < 14; i++)
+	{
+		char name[100] = { 0 };
+		sprintf(name, "hero/hero (%d).png", i);
+		animFrames.pushBack(SpriteFrame::create(name, Rect(0, 0, 100, 200)));
+	}
+	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
+	Animate* animate = Animate::create(animation);
+	mySprite->runAction(RepeatForever::create(animate));
+
+	return true;
 }
 
 void MenuGame::menuCloseCallback(cocos2d::Ref * pSender)

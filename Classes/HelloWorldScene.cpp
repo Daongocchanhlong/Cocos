@@ -25,7 +25,8 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "ui/CocosGUI.h"
-
+#include "MenuGame.h"
+ 
 using namespace cocos2d;
 
 
@@ -65,11 +66,23 @@ bool HelloWorld::init()
 	lableNameGame->enableShadow();
 	lableNameGame->enableOutline(Color4B::RED,3);
 	this->addChild(lableNameGame);
+	//load version's game
+	auto lableVersionGame = Label::createWithTTF("VER 1.0.0.0", "fonts/Marker Felt.ttf", 15);
+	lableVersionGame->setAnchorPoint(Vec2(0,1));
+	lableVersionGame->enableOutline(Color4B::RED, 1);
+	lableVersionGame->setPosition(Vec2(5, visibleSize.height));
+	this->addChild(lableVersionGame);
+	//load date's game released
+	auto lableDateGame = Label::createWithTTF("11/01/2019", "fonts/Marker Felt.ttf", 15);
+	lableDateGame->setAnchorPoint(Vec2(1, 1));
+	lableDateGame->enableOutline(Color4B::RED, 1);
+	lableDateGame->setPosition(Vec2(visibleSize.width - 5, visibleSize.height));
+	this->addChild(lableDateGame);
 	//set effect lablenamegame
 	auto fadeIn = FadeIn::create(1.0f);
 	auto fadeOut = FadeOut::create(2.0f);
 	auto sequenceFadeNameGame = Sequence::create(fadeIn, fadeOut, nullptr);
-	auto repeatsequenceFadeNameGame = Repeat::create(sequenceFadeNameGame,20);
+	auto repeatsequenceFadeNameGame = Repeat::create(sequenceFadeNameGame,10);
 	lableNameGame->runAction(repeatsequenceFadeNameGame);
 	//loading barbg
 	auto loadingbarBg = Sprite::create("loadingbar_bg.png");
@@ -87,12 +100,19 @@ bool HelloWorld::init()
 		{
 			loadingBar->setPercent(loadingBar->getPercent() + 1);
 		}
+		if (loadingBar->getPercent() >= 100)
+		{
+			Director::getInstance()->replaceScene(MenuGame::createScene());
+
+		}
 	});
 	//create sequence loadingbar
-	auto sequenceloadingbar = Sequence::create(updateLoadingBar,DelayTime::create(0.1),nullptr);
+	auto sequenceloadingbar = Sequence::create(updateLoadingBar,DelayTime::create(0.01),nullptr);
 	auto repeat = Repeat::create(sequenceloadingbar, 100);
 	loadingBar->runAction(repeat);
 	
+	//replace to MenuGame
+
 
     return true;
 }
