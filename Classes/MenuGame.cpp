@@ -80,23 +80,40 @@ bool MenuGame::init()
 	addChild(menuLabel);
 
 	//add animation
-	auto mySprite = Sprite::create("hero/hero (1).png");
+	/*SpriteFrameCache::getInstance()->addSpriteFramesWithFile("hero/luf.plist");
+	auto mySprite = Sprite::create("hero/luf (1).png");
 	mySprite->setPosition(Vec2(visibleSize.width /2, visibleSize.height / 2));
-	mySprite->setContentSize(visibleSize/5);
+	mySprite->setContentSize(visibleSize/8);
 	this->addChild(mySprite);
+
 	Vector<SpriteFrame*> animFrames;
-	animFrames.reserve(13);
-	for (int i = 1; i < 14; i++)
+	animFrames.reserve(18);
+	for (int i = 1; i < 19; i++)
 	{
 		char name[100] = { 0 };
-		sprintf(name, "hero/hero (%d).png", i);
-		animFrames.pushBack(SpriteFrame::create(name, Rect(0, 0, 100, 200)));
+		sprintf(name, "hero/luf (%d).png", i);
+		animFrames.pushBack(SpriteFrame::create(name, Rect(0, 0, 100, 100)));
 	}
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
-	Animate* animate = Animate::create(animation);
-	mySprite->runAction(RepeatForever::create(animate));
-
-	return true;
+	auto animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
+	auto animate = Animate::create(animation);
+	mySprite->runAction(RepeatForever::create(animate));*/
+	
+	auto spritecache = SpriteFrameCache::getInstance();
+	spritecache->addSpriteFramesWithFile("luf.plist");
+	Vector<SpriteFrame*> animFrames;
+	char str[100];
+	for (int i = 1; i < 19; i++)
+	{
+		sprintf(str, "luf (%d).png", i);
+		CCLOG(str);
+		animFrames.pushBack(spritecache->getSpriteFrameByName(str));
+	}
+	auto sprite = Sprite::createWithSpriteFrameName("luf (1).png");
+	addChild(sprite);
+	sprite->setPosition(Vec2(visibleSize.width / 2 + 75, visibleSize.height / 2 + 75));
+	auto animation = Animation::createWithSpriteFrames(animFrames, 1.0f / 8);
+	sprite->runAction(RepeatForever::create(Animate::create(animation)));
+	
 }
 
 void MenuGame::menuCloseCallback(cocos2d::Ref * pSender)
