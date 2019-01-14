@@ -25,17 +25,17 @@
 
 #include "SimpleAudioEngine.h"
 #include "ui/CocosGUI.h"
-#include "MenuGame.h"
+#include "PlayGame.h"
 #include <vector>
 
 using namespace std;
 using namespace cocos2d;
 
 
-Scene* MenuGame::createScene()
+Scene* PlayGame::createScene()
 {
-	auto scene = MenuGame::create();
-	auto layer = MenuGame::create();
+	auto scene = PlayGame::create();
+	auto layer = PlayGame::create();
 	scene->addChild(layer);
 	return scene;
 }
@@ -47,59 +47,16 @@ static void problemLoading(const char* filename)
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
-bool MenuGame::init()
+bool PlayGame::init()
 {
 	if (!Scene::init())
 	{	
 		return false;
 	}
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	//add background menu
-	auto backgroundMenu = Sprite::create("backgroundMenu.png");
-	backgroundMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	backgroundMenu->setContentSize(visibleSize);
-	this->addChild(backgroundMenu);
-	//create menu
-	auto itemPlay = MenuItemFont::create("Play", nullptr);
-	itemPlay->setColor(Color3B::RED);
-	auto itemSetting = MenuItemFont::create("Setting", nullptr);
-	itemSetting->setColor(Color3B::RED);
-	auto itemMoreGame = MenuItemFont::create("More Game", nullptr);
-	itemMoreGame->setColor(Color3B::RED);
-	auto itemAbout = MenuItemFont::create("About", nullptr);
-	itemAbout->setColor(Color3B::RED);
-	auto itemQuit = MenuItemFont::create("Quit", nullptr);
-	itemQuit->setColor(Color3B::RED);
-	/*itemPlay->setPosition(400, 300);
-	itemSetting->setPosition(400, 250);
-	itemMoreGame->setPosition(400, 200);
-	itemAbout->setPosition(400, 150);*/
-	auto menuLabel = Menu::create(itemPlay, itemSetting, itemMoreGame,itemAbout,itemQuit, nullptr);
-	menuLabel->alignItemsVerticallyWithPadding(10);
-	menuLabel->setPosition(visibleSize.width/2 - 70, visibleSize.height/2 +50);
-	addChild(menuLabel);
-
-	//add animation	
-	auto spritecache = SpriteFrameCache::getInstance();
-	spritecache->addSpriteFramesWithFile("luf.plist");
-	Vector<SpriteFrame*> animFrames;
-	char str[100];
-	for (int i = 1; i < 19; i++)
-	{
-		sprintf(str, "luf (%d).png", i);
-		animFrames.pushBack(spritecache->getSpriteFrameByName(str));
-	}
-	auto sprite = Sprite::createWithSpriteFrameName("luf (1).png");
-	addChild(sprite);
-	sprite->setPosition(Vec2(visibleSize.width / 2 + 75, visibleSize.height / 2 + 75));
-	auto animation = Animation::createWithSpriteFrames(animFrames, 1.0f / 8);
-	sprite->runAction(RepeatForever::create(Animate::create(animation)));
 	
-	auto move = MoveBy::create(2,Vec2(-100, -100));
-	sprite->runAction(move);
 }
 
-void MenuGame::menuCloseCallback(cocos2d::Ref * pSender)
+void PlayGame::menuCloseCallback(cocos2d::Ref * pSender)
 {
 	//Close the cocos2d-x game scene and quit the application
 	Director::getInstance()->end();
@@ -115,6 +72,6 @@ void MenuGame::menuCloseCallback(cocos2d::Ref * pSender)
 
 }
 
-void MenuGame::onTouchMenu(Ref * ref)
+void PlayGame::onTouchMenu(Ref * ref)
 {
 }
