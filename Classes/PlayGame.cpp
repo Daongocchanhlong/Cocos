@@ -53,6 +53,78 @@ bool PlayGame::init()
 	{	
 		return false;
 	}
+
+	auto mainCharacter = Sprite::create("mainCharacter.png");
+	mainCharacter->setPosition(Vec2(50, 50));
+	this->addChild(mainCharacter);
+
+	auto eventListen = EventListenerKeyboard::create();
+
+	eventListen->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event) {
+
+		auto loc = event->getCurrentTarget()->getPosition();
+		switch (keyCode) {
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		case EventKeyboard::KeyCode::KEY_A:
+			event->getCurrentTarget()->setPosition(loc.x - 10, loc.y);
+			break;
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		case EventKeyboard::KeyCode::KEY_D:
+			event->getCurrentTarget()->setPosition(loc.x + 10, loc.y);
+			break;
+		case EventKeyboard::KeyCode::KEY_SPACE:
+		{
+			auto spritecache = SpriteFrameCache::getInstance();
+			spritecache->addSpriteFramesWithFile("luffymain.plist");
+			Vector<SpriteFrame*> animFrames;
+			char str[100];
+			for (int i = 1; i < 44; i++)
+			{
+				sprintf(str, "luffytrans (%d).png", i);
+				animFrames.pushBack(spritecache->getSpriteFrameByName(str));
+			}
+			auto animation = Animation::createWithSpriteFrames(animFrames, 1.0f / 8);
+			event->getCurrentTarget()->runAction(Animate::create(animation));
+			break;
+		}
+		case EventKeyboard::KeyCode::KEY_C:
+		{
+			auto spritecache2 = SpriteFrameCache::getInstance();
+			spritecache2->addSpriteFramesWithFile("luffymainHit.plist");
+			Vector<SpriteFrame*> animFrames2;
+			char str2[100];
+			for (int i = 44; i < 51; i++)
+			{
+				sprintf(str2, "luffytrans (%d).png", i);
+				animFrames2.pushBack(spritecache2->getSpriteFrameByName(str2));
+			}
+			auto animation2 = Animation::createWithSpriteFrames(animFrames2, 1.0f / 8);
+			event->getCurrentTarget()->runAction(Animate::create(animation2));
+			break;
+		}
+		case EventKeyboard::KeyCode::KEY_V:
+		{
+			auto spritecache2 = SpriteFrameCache::getInstance();
+			spritecache2->addSpriteFramesWithFile("luffymainTele.plist");
+			Vector<SpriteFrame*> animFrames2;
+			char str2[100];
+			for (int i = 51; i < 57; i++)
+			{
+				sprintf(str2, "luffytrans (%d).png", i);
+				animFrames2.pushBack(spritecache2->getSpriteFrameByName(str2));
+			}
+			auto animation2 = Animation::createWithSpriteFrames(animFrames2, 1.0f / 8);
+			event->getCurrentTarget()->setPosition(loc.x + 100, loc.y);
+			event->getCurrentTarget()->runAction(Animate::create(animation2));
+			//event->getCurrentTarget()->setPosition(loc.x + 100, loc.y);
+			break;
+		}
+		}
+	};
+
+	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListen, mainCharacter);
+
+	return true;
 	
 }
 

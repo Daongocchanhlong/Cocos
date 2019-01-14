@@ -26,6 +26,8 @@
 #include "SimpleAudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "MenuGame.h"
+#include "cocos2d.h"
+#include <string>
  
 using namespace cocos2d;
 
@@ -45,55 +47,83 @@ static void problemLoading(const char* filename)
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
-// on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
-    //////////////////////////////
-    // 1. super init first
+	// first init
     if ( !Scene::init() )
     {
         return false;
     }	
 	auto visibleSize = Director::getInstance()->getVisibleSize();
+	
 	//load background
-	auto background = Sprite::create("background.png");
-	background->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	background->setContentSize(visibleSize);
-	this->addChild(background);
+	HelloWorld::loadBackground("background.png", visibleSize.width / 2, visibleSize.height /2);
+	
 	//load name's game
-	auto lableNameGame = Label::createWithTTF("GUN X GUN", "fonts/Marker Felt.ttf", 50);
-	lableNameGame->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	lableNameGame->enableShadow();
-	lableNameGame->enableOutline(Color4B::RED,3);
-	this->addChild(lableNameGame);
-	//load version's game
-	auto lableVersionGame = Label::createWithTTF("VER 1.0.0.0", "fonts/Marker Felt.ttf", 15);
-	lableVersionGame->setAnchorPoint(Vec2(0,1));
-	lableVersionGame->enableOutline(Color4B::RED, 1);
-	lableVersionGame->setPosition(Vec2(5, visibleSize.height));
-	this->addChild(lableVersionGame);
-	//load date's game released
-	auto lableDateGame = Label::createWithTTF("11/01/2019", "fonts/Marker Felt.ttf", 15);
-	lableDateGame->setAnchorPoint(Vec2(1, 1));
-	lableDateGame->enableOutline(Color4B::RED, 1);
-	lableDateGame->setPosition(Vec2(visibleSize.width - 5, visibleSize.height));
-	this->addChild(lableDateGame);
+	auto nameGame = HelloWorld::loadLable("X GUN X", 50, visibleSize.width / 2, visibleSize.height / 2);
+	
 	//set effect lablenamegame
 	auto fadeIn = FadeIn::create(1.0f);
 	auto fadeOut = FadeOut::create(2.0f);
 	auto sequenceFadeNameGame = Sequence::create(fadeIn, fadeOut, nullptr);
-	auto repeatsequenceFadeNameGame = Repeat::create(sequenceFadeNameGame,10);
-	lableNameGame->runAction(repeatsequenceFadeNameGame);
+	auto repeatsequenceFadeNameGame = Repeat::create(sequenceFadeNameGame, 10);
+	nameGame->runAction(repeatsequenceFadeNameGame);
+	
+	//load version's game
+	auto verGame = HelloWorld::loadLable("VER 1.0.0.0", 15, 5, visibleSize.height);
+	verGame->setAnchorPoint(Vec2(0, 1));
+	
+	//load date's game released
+	auto dateGame = HelloWorld::loadLable("14/01/2019", 15, visibleSize.width-5, visibleSize.height);
+	dateGame->setAnchorPoint(Vec2(1, 1));
+	
+	//loading game
+	HelloWorld::loadGame();
+    
+	return true;
+}
+
+void HelloWorld::loadBackground(std::string nameBackground, int posX, int posY)
+{
+	auto background = Sprite::create(nameBackground);
+	background->setPosition(Vec2(posX,posY));
+	background->setContentSize(Director::getInstance()->getVisibleSize());
+	this->addChild(background);
+}
+
+void HelloWorld::createSprite(std::string nameSprite, int posX, int posY)
+{
+	auto sprite = Sprite::create(nameSprite);
+	sprite->setPosition(Vec2(posX, posY));
+	this->addChild(sprite);
+}
+
+Label* HelloWorld::loadLable(std::string text, int font, int posX, int posY)
+{
+	auto lable = Label::createWithTTF(text, "fonts/Marker Felt.ttf", font);
+	lable->setPosition(Vec2(posX,posY));
+	lable->enableShadow();
+	lable->enableOutline(Color4B::RED, 3);
+	this->addChild(lable);
+	return lable;
+}
+
+void HelloWorld::loadGame()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	
 	//loading barbg
 	auto loadingbarBg = Sprite::create("loadingbar_bg.png");
 	loadingbarBg->setPosition(visibleSize.width / 2, 20);
 	this->addChild(loadingbarBg);
+	
 	//loading bar
 	auto loadingBar = ui::LoadingBar::create("loadingbar.png");
 	loadingBar->setDirection(ui::LoadingBar::Direction::LEFT);
 	loadingBar->setPosition(Vec2(visibleSize.width / 2, 20));
 	loadingBar->setPercent(0);
 	this->addChild(loadingBar);
+	
 	//create func loading bar
 	auto updateLoadingBar = CallFunc::create([=]() {
 		if (loadingBar->getPercent() < 100)
@@ -103,38 +133,11 @@ bool HelloWorld::init()
 		if (loadingBar->getPercent() >= 100)
 		{
 			Director::getInstance()->replaceScene(MenuGame::createScene());
-
 		}
 	});
+	
 	//create sequence loadingbar
-	auto sequenceloadingbar = Sequence::create(updateLoadingBar,DelayTime::create(0.01),nullptr);
+	auto sequenceloadingbar = Sequence::create(updateLoadingBar, DelayTime::create(0.01), nullptr);
 	auto repeat = Repeat::create(sequenceloadingbar, 100);
 	loadingBar->runAction(repeat);
-	
-	//replace to MenuGame
-
-
-    return true;
-}
-
-void HelloWorld::onTouchMenu(Ref *ref) 
-{
-	
-}
-
-void HelloWorld::menuCloseCallback(Ref* pSender)
-{
-    //Close the cocos2d-x game scene and quit the application
-    Director::getInstance()->end();
-
-    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
-
-    /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() and exit(0) as given above,instead trigger a custom event created in RootViewController.mm as below*/
-
-    //EventCustom customEndEvent("game_scene_close_event");
-    //_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }

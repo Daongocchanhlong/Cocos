@@ -26,20 +26,20 @@
 #define __MENUGAME_SCENE_H__
 
 #include "cocos2d.h"
-
+#include <string.h>
 class MenuGame : public cocos2d::Scene
 {
 public:
     static cocos2d::Scene* createScene();
-
-    virtual bool init();
-    
-    // a selector callback
+    virtual bool init();   
     void menuCloseCallback(cocos2d::Ref* pSender);
-    
-    // implement the "static create()" method manually
+	void loadBackground(std::string nameBackground, int posX, int posY);
+	void loadMenu();
+	void loadAnimation(std::string namePlist , const char * namePng, int CountImage);
+    void onTouchMenu(Ref *ref);
+	// implement the "static create()" method manually
     CREATE_FUNC(MenuGame);
-	void onTouchMenu(Ref *ref);
+	
 };
 
 #endif // __HELLOWORLD_SCENE_H__

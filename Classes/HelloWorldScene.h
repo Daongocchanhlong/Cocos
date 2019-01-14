@@ -25,7 +25,9 @@
 #ifndef __HELLOWORLD_SCENE_H__
 #define __HELLOWORLD_SCENE_H__
 
+
 #include "cocos2d.h"
+#include <string>
 
 class HelloWorld : public cocos2d::Scene
 {
@@ -35,11 +37,12 @@ public:
     virtual bool init();
     
     // a selector callback
-    void menuCloseCallback(cocos2d::Ref* pSender);
-    
+	void loadBackground(std::string nameBackground,int posX,int posY);
+	void createSprite(std::string nameSprite, int posX, int posY);
+	cocos2d::Label * loadLable(std::string text, int font, int posX, int posY);
+	void loadGame();
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
-	void onTouchMenu(Ref *ref);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

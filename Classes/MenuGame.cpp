@@ -27,6 +27,7 @@
 #include "ui/CocosGUI.h"
 #include "MenuGame.h"
 #include <vector>
+#include "PlayGame.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -54,14 +55,39 @@ bool MenuGame::init()
 		return false;
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
+	
 	//add background menu
-	auto backgroundMenu = Sprite::create("backgroundMenu.png");
-	backgroundMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	backgroundMenu->setContentSize(visibleSize);
-	this->addChild(backgroundMenu);
+	MenuGame::loadBackground("backgroundMenu.png", visibleSize.width / 2, visibleSize.height / 2);
+	
 	//create menu
+	MenuGame::loadMenu();
+
+	//add animation	
+	MenuGame::loadAnimation("luf.plist", "luf (%d).png", 19);
+	
+	return true;
+}
+
+void MenuGame::menuCloseCallback(cocos2d::Ref * pSender)
+{
+	//Close the cocos2d-x game scene and quit the application
+	Director::getInstance()->end();
+}
+
+void MenuGame::loadBackground(std::string nameBackground, int posX, int posY)
+{
+	auto background = Sprite::create(nameBackground);
+	background->setPosition(Vec2(posX, posY));
+	background->setContentSize(Director::getInstance()->getVisibleSize());
+	this->addChild(background);
+}
+
+void MenuGame::loadMenu()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto itemPlay = MenuItemFont::create("Play", nullptr);
 	itemPlay->setColor(Color3B::RED);
+	itemPlay->setCallback(CC_CALLBACK_1(MenuGame::onTouchMenu, this));
 	auto itemSetting = MenuItemFont::create("Setting", nullptr);
 	itemSetting->setColor(Color3B::RED);
 	auto itemMoreGame = MenuItemFont::create("More Game", nullptr);
@@ -70,51 +96,37 @@ bool MenuGame::init()
 	itemAbout->setColor(Color3B::RED);
 	auto itemQuit = MenuItemFont::create("Quit", nullptr);
 	itemQuit->setColor(Color3B::RED);
-	/*itemPlay->setPosition(400, 300);
-	itemSetting->setPosition(400, 250);
-	itemMoreGame->setPosition(400, 200);
-	itemAbout->setPosition(400, 150);*/
-	auto menuLabel = Menu::create(itemPlay, itemSetting, itemMoreGame,itemAbout,itemQuit, nullptr);
+	itemQuit->setCallback(CC_CALLBACK_1(MenuGame::menuCloseCallback, this));
+	auto menuLabel = Menu::create(itemPlay, itemSetting, itemMoreGame, itemAbout, itemQuit, nullptr);
 	menuLabel->alignItemsVerticallyWithPadding(10);
-	menuLabel->setPosition(visibleSize.width/2 - 70, visibleSize.height/2 +50);
+	menuLabel->setPosition(visibleSize.width / 2 - 70, visibleSize.height / 2 + 50);
 	addChild(menuLabel);
 
-	//add animation	
+}
+
+void MenuGame::loadAnimation(std::string namePlist, const char * namePng, int CountImage)
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	//add plist
 	auto spritecache = SpriteFrameCache::getInstance();
-	spritecache->addSpriteFramesWithFile("luf.plist");
+	spritecache->addSpriteFramesWithFile(namePlist);
 	Vector<SpriteFrame*> animFrames;
 	char str[100];
-	for (int i = 1; i < 19; i++)
+	for (int i = 1; i < CountImage; i++)
 	{
-		sprintf(str, "luf (%d).png", i);
+		sprintf(str, namePng, i);
 		animFrames.pushBack(spritecache->getSpriteFrameByName(str));
 	}
-	auto sprite = Sprite::createWithSpriteFrameName("luf (1).png");
+	//create fist sprite
+	auto sprite = Sprite::createWithSpriteFrame(animFrames.front());
 	addChild(sprite);
+	//run action animation
 	sprite->setPosition(Vec2(visibleSize.width / 2 + 75, visibleSize.height / 2 + 75));
 	auto animation = Animation::createWithSpriteFrames(animFrames, 1.0f / 8);
 	sprite->runAction(RepeatForever::create(Animate::create(animation)));
-	
-	auto move = MoveBy::create(2,Vec2(-100, -100));
-	sprite->runAction(move);
-}
-
-void MenuGame::menuCloseCallback(cocos2d::Ref * pSender)
-{
-	//Close the cocos2d-x game scene and quit the application
-	Director::getInstance()->end();
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
-
-	/*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() and exit(0) as given above,instead trigger a custom event created in RootViewController.mm as below*/
-
-	//EventCustom customEndEvent("game_scene_close_event");
-	//_eventDispatcher->dispatchEvent(&customEndEvent);
-
 }
 
 void MenuGame::onTouchMenu(Ref * ref)
 {
+	Director::getInstance()->replaceScene(PlayGame::createScene());
 }
