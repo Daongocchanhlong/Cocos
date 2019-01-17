@@ -38,7 +38,7 @@ public:
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
 	void fallRock(float);
-
+	virtual void update(float);
 
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);

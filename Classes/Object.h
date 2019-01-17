@@ -11,15 +11,13 @@ class FatherObject
 public:
 	FatherObject();
 	virtual ~FatherObject();
-	int getPosY();
-	int getPosX();
-	void setPosXY( int posX, int posY);
+	void setPosXY(float posX, float posY);
 	Sprite* getSprite();
 	void setSprite(Sprite * sprite);
-
+	void setAlive(bool alive);
+	bool getAlive();
 private:
-	Sprite * sprite;
-	int posX;
-	int posY;
+	Sprite *mSprite;
+	bool mAlive;
 };
 #endif // !_ROCK_

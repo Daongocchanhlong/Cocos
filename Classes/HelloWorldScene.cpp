@@ -26,16 +26,20 @@
 #include "SimpleAudioEngine.h"
 #include <vector>
 #include "Rock.h"
+#include "Planes.h"
 #include <time.h>
+#include "Bullet.h"
 #include <windows.h>
 
 using namespace std;
 using namespace cocos2d;
 
-int const numRock = 20;
 Scene* HelloWorld::createScene()
 {
-    return HelloWorld::create();
+	/*auto scene = Scene::create();
+	auto layer = HelloWorld::create();
+	scene->addChild(layer);*/
+	return HelloWorld::create();
 }
 
 
@@ -47,9 +51,9 @@ static void problemLoading(const char* filename)
 }
 
 // on "init" you need to initialize your instance
-
 vector<Rock*> listRock;
 int i = 0;
+Planes *spaceShip;
 bool HelloWorld::init()
 {
 	srand(time(NULL));
@@ -59,17 +63,28 @@ bool HelloWorld::init()
     {
         return false;
     }
-	auto sprite = Sprite::create("rock.png");
-
-	for (int i = 0; i < numRock ; i++)
+	
+	for (int  i = 0; i < 10; i++)
 	{
-		Rock *rock = new Rock();
+		Rock * rock = new Rock();
 		listRock.push_back(rock);
-		this->addChild(rock->getSprite());
+		addChild(rock->getSprite());
 	}
-	
-	this->schedule(schedule_selector(HelloWorld::fallRock), 1);
-	
+	listRock[0]->setAlive(true);
+	// drive plane
+	spaceShip = new Planes();
+	for (auto  bullet: spaceShip->getListBullet() )
+	{
+		addChild(bullet->getSprite());
+		bullet->getSprite()->setVisible(false);
+	}
+	this->addChild(spaceShip->getSprite());
+	spaceShip->dirvePlane(this);
+
+
+
+	scheduleUpdate();
+	return true;
 }
 
 
@@ -90,31 +105,24 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 }
 
-void HelloWorld::fallRock(float)
+void HelloWorld::update(float delta)
 {
-	int randRock = rand() % 3 + 1;
-	if (randRock ==3 )
+	for (int j = 0; j < 9; j++)
 	{
-		listRock[i]->fall();
-		listRock[i+1]->fall();
-		listRock[i+2]->fall();
-		i = i + 3;
+		listRock[j]->update(1);
+		if (listRock[j]->getSprite()->getPosition().y == 550)
+		{
+			listRock[j+1]->setAlive(true);
+		}
+		if (listRock[9]->getAlive())
+		{
+			listRock[9]->setAlive(false);
+			listRock[0]->setAlive(true);
+		}
 	}
-	else if (randRock == 2)
-	{
-		listRock[i]->fall();
-		listRock[i + 1]->fall();
-		i = i + 2;
-	}
-	else
-	{
-		listRock[i]->fall();
-		i++;
-	}
+	spaceShip->update();
 
-	if (i > numRock-3)
-	{
-		i = 0;
-	}
 }
+
+
 
